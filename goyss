@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CRUD Buku Tamu Pekerjaan</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    form input, form select, form button {
+      padding: 10px;
+      font-size: 14px;
+    }
+
+    form button {
+      grid-column: span 2;
+      background: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    form button:hover {
+      background: #0056b3;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+
+    table th {
+      background: #007bff;
+      color: white;
+    }
+
+    .edit {
+      background: orange;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .delete {
+      background: red;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .edit:hover {
+      background: darkorange;
+    }
+
+    .delete:hover {
+      background: darkred;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>CRUD Buku Tamu Pekerjaan</h1>
+
+  <form id="guestForm">
+    <input type="hidden" id="editIndex">
+
+    <input type="text" id="nama" placeholder="Nama Tamu" required>
+
+    <input type="text" id="pekerjaan" placeholder="Pekerjaan" required>
+
+    <input type="text" id="instansi" placeholder="Instansi / Perusahaan" required>
+
+    <select id="keperluan" required>
+      <option value="">-- Pilih Keperluan --</option>
+      <option value="Interview">Interview</option>
+      <option value="Meeting">Meeting</option>
+      <option value="Kerja Sama">Kerja Sama</option>
+      <option value="Lainnya">Lainnya</option>
+    </select>
+
+    <button type="submit">Simpan Data</button>
+  </form>
+
+  <table>
+    <thead>
+      <tr>
+        <th>No</th>
+        <th>Nama</th>
+        <th>Pekerjaan</th>
+        <th>Instansi</th>
+        <th>Keperluan</th>
+        <th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody">
+    </tbody>
+  </table>
+</div>
+
+<script>
+  let dataTamu = [];
+
+  const form = document.getElementById("guestForm");
+  const tableBody = document.getElementById("tableBody");
+
+  form.addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const nama = document.getElementById("nama").value;
+    const pekerjaan = document.getElementById("pekerjaan").value;
+    const instansi = document.getElementById("instansi").value;
+    const keperluan = document.getElementById("keperluan").value;
+    const editIndex = document.getElementById("editIndex").value;
+
+    const tamu = {
+      nama,
+      pekerjaan,
+      instansi,
+      keperluan
+    };
+
+    if (editIndex === "") {
+      dataTamu.push(tamu);
+    } else {
+      dataTamu[editIndex] = tamu;
+      document.getElementById("editIndex").value = "";
+    }
+
+    form.reset();
+    tampilkanData();
+  });
+
+  function tampilkanData() {
+    tableBody.innerHTML = "";
+
+    dataTamu.forEach((item, index) => {
+      tableBody.innerHTML += `
+        <tr>
+          <td>${index + 1}</td>
+          <td>${item.nama}</td>
+          <td>${item.pekerjaan}</td>
+          <td>${item.instansi}</td>
+          <td>${item.keperluan}</td>
+          <td>
+            <button class="edit" onclick="editData(${index})">Edit</button>
+            <button class="delete" onclick="hapusData(${index})">Hapus</button>
+          </td>
+        </tr>
+      `;
+    });
+  }
+
+  function editData(index) {
+    const tamu = dataTamu[index];
+
+    document.getElementById("nama").value = tamu.nama;
+    document.getElementById("pekerjaan").value = tamu.pekerjaan;
+    document.getElementById("instansi").value = tamu.instansi;
+    document.getElementById("keperluan").value = tamu.keperluan;
+
+    document.getElementById("editIndex").value = index;
+  }
+
+  function hapusData(index) {
+    if (confirm("Yakin ingin menghapus data ini?")) {
+      dataTamu.splice(index, 1);
+      tampilkanData();
+    }
+  }
+</script>
+
+</body>
+</html>
